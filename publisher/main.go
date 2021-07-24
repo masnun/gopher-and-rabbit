@@ -33,19 +33,14 @@ func main() {
 
 	addTask := gopher_and_rabbit.AddTask{Number1: rand.Intn(999), Number2: rand.Intn(999)}
 	body, err := json.Marshal(addTask)
-	if err != nil {
-		handleError(err, "Error encoding JSON")
-	}
+	handleError(err, "Error encoding JSON")
 
 	err = amqpChannel.Publish("", queue.Name, false, false, amqp.Publishing{
 		DeliveryMode: amqp.Persistent,
 		ContentType:  "text/plain",
 		Body:         body,
 	})
-
-	if err != nil {
-		log.Fatalf("Error publishing message: %s", err)
-	}
+	handleError(err, "Error publishing message")
 
 	log.Printf("AddTask: %d+%d", addTask.Number1, addTask.Number2)
 
